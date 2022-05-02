@@ -1,4 +1,4 @@
-Requirement: You need to have dotnet 6.0
-To run the game, run:
-    dotnet build
-    dotnet run
+Requirement: You need to have dotnet 6.0<br>
+To run the game, run:<br>
+    <b>dotnet build</b> <br>
+    <b>dotnet run</b>
