@@ -32,6 +32,9 @@ namespace MineSweeper {
                         this.screenService.DrawText(square.GetDisplaySymbol(), actor.GetPosition(), "", 30, null, true, true);
                     }
                 }
+                else {
+                    this.screenService.DrawActor(actor);
+                }
             }
 
             // this.screenService.DrawActors(cast.GetAllActors());

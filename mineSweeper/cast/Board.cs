@@ -5,10 +5,10 @@ namespace MineSweeper
     class Board : Actor
     {
         private (int, int) dimension;
-        private bool[,] mineGrid;
+        private List<List<bool>> mineGrid;
         private List<List<Square>> squares;
 
-        public Board((int, int) dimension, bool[,] mineGrid,
+        public Board((int, int) dimension, List<List<bool>> mineGrid,
                     string path, int width, int height,
                     float x = 0, float y = 0,
                     float vx = 0, float vy = 0,
@@ -39,7 +39,7 @@ namespace MineSweeper
         }
 
         public bool IsMine(int r, int c) {
-            return mineGrid[r, c];
+            return mineGrid[r][c];
         }
 
         public List<List<Square>> GetSquares() {
@@ -58,7 +58,7 @@ namespace MineSweeper
             };
 
             // If indexes are invalid, OR if it's a bomb, OR if the square is already revealed, then return.
-            if (row < 0 || col < 0 || row >= dimension.Item1 || col >= dimension.Item2 || mineGrid[row, col] || squares[row][col].IsRevealed()) {
+            if (row < 0 || col < 0 || row >= dimension.Item1 || col >= dimension.Item2 || mineGrid[row][col] || squares[row][col].IsRevealed()) {
                 return;
             }
             
@@ -70,7 +70,7 @@ namespace MineSweeper
             foreach ((int x, int y) neighbor in neighbors)
             {
                 if (neighbor.x >= 0 && neighbor.y >= 0 && neighbor.x < dimension.Item1 && neighbor.y < dimension.Item2) {
-                    numMines += mineGrid[neighbor.x, neighbor.y] ? 1 : 0;
+                    numMines += mineGrid[neighbor.x][neighbor.y] ? 1 : 0;
                 }
             }
 
@@ -91,7 +91,7 @@ namespace MineSweeper
         public void RevealAllMines() {
             for (int r = 0; r < dimension.Item1; r++) {
                 for (int c = 0; c < dimension.Item2; c++) {
-                    if (mineGrid[r,c]) {
+                    if (mineGrid[r][c]) {
                         squares[r][c].Reveal(true);
                     }
                 }
@@ -100,7 +100,7 @@ namespace MineSweeper
 
         // Return True if hit a bomb, False otherwise
         public bool Click(int row, int col) {
-            if (mineGrid[row, col]) {
+            if (mineGrid[row][col]) {
                 squares[row][col].Reveal(true);
                 return true;
             }

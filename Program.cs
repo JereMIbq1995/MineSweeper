@@ -47,28 +47,15 @@ namespace MineSweeper
 
             // Create the cast
             Cast cast = new Cast();
-            bool[,] mineGrid = new bool[7,7] {
-                {false, false, false, true, false, false, false},
-                {false, true, false, false, false, false, false},
-                {false, true, false, true, false, true, false},
-                {false, false, false, false, false, false, true},
-                {false, false, false, false, false, false, true},
-                {false, false, false, false, false, false, false},
-                {false, true, false, true, false, false, false},
-            };
-
-            Board board = new Board((7,7), mineGrid, "", W_SIZE.Item1-50, W_SIZE.Item2-50, W_SIZE.Item1/2, W_SIZE.Item2/2);
-
-            // Give actors to cast
-            cast.AddActor("board", board);
 
             // Create the script
             Script script = new Script();
 
             // Add all input actions
             script.AddAction("input", new HandleQuitAction(1, screenService));
-            script.AddAction("input", new InitializeBoardAction(1));
+            script.AddAction("input", new InitializeBoardAction(1, W_SIZE, (15,15)));
             script.AddAction("input", new HandleClickAction(1, mouseService, physicsService));
+            script.AddAction("input", new HandleFlagAction(1, mouseService, physicsService));
 
             // Add all update actions
             // script.AddAction("update", new HandleGameOverAction(1));
