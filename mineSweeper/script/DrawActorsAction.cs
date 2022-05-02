@@ -20,9 +20,9 @@ namespace MineSweeper {
 
             // Draw all actors as rectangles for now.
             foreach (Actor actor in cast.GetAllActors()) {
-                bool isBoard = actor is Board;
+                // bool isBoard = actor is Board;
                 // Color actorColor = actor is Board ? Color.BLUE : Color.BLACK;
-                if (isBoard) {
+                if (actor is Board) {
                     this.screenService.DrawRectangle(actor.GetPosition(), actor.GetWidth(), actor.GetHeight(), Color.BLUE, 2);
                 }
                 else if (actor is Square) {
