@@ -53,12 +53,13 @@ namespace MineSweeper
 
             // Add all input actions
             script.AddAction("input", new HandleQuitAction(1, screenService));
-            script.AddAction("input", new InitializeBoardAction(1, W_SIZE, (15,15)));
-            script.AddAction("input", new HandleClickAction(1, mouseService, physicsService));
+            script.AddAction("input", new InitializeBoardAction(1, W_SIZE, (10,10), (float)0.10));
+            script.AddAction("input", new HandleClickAction(1, mouseService, physicsService, W_SIZE));
             script.AddAction("input", new HandleFlagAction(1, mouseService, physicsService));
 
             // Add all update actions
             // script.AddAction("update", new HandleGameOverAction(1));
+            script.AddAction("update", new HandleWinAction(1, W_SIZE));
 
             // Add all output actions
             script.AddAction("output", new DrawActorsAction(1, screenService));

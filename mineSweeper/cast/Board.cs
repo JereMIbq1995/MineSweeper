@@ -5,7 +5,10 @@ namespace MineSweeper
     class Board : Actor
     {
         private (int, int) dimension;
-        private List<List<bool>> mineGrid;
+        private int numSquares;
+        private int numMines;
+        private int numRevealed;
+        private List<List<bool>> mineGrid;   // mineGrid: a 2D list of booleans. True if the square is a mine, False otherwise
         private List<List<Square>> squares;
 
         public Board((int, int) dimension, List<List<bool>> mineGrid,
@@ -16,8 +19,27 @@ namespace MineSweeper
                     bool flipped = false) :
         base(path, width, height, x, y, vx, vy, rotation, rotationVel, flipped)
         {
+            //dimension and numsquares
             this.dimension = dimension;
+            this.numSquares = dimension.Item1 * dimension.Item2;
+
+            // mineGrid and numMines
             this.mineGrid = mineGrid;
+
+            // Count the number of mines in the grid
+            this.numMines = 0;
+            for (int r = 0; r < dimension.Item1; r++) {
+                for (int c = 0; c < dimension.Item2; c++) {
+                    if (mineGrid[r][c]) {
+                        this.numMines++;
+                    }
+                }
+            }
+
+            // Initially nothing is revealed
+            this.numRevealed = 0;
+
+            // initialize 2D List of squares
             this.squares = new List<List<Square>>();
 
             this.PopulateBoard();
@@ -42,12 +64,24 @@ namespace MineSweeper
             return mineGrid[r][c];
         }
 
+        public bool IsSwept() {
+            return this.numSquares - this.numMines == this.numRevealed;
+        }
+
         public List<List<Square>> GetSquares() {
             return this.squares;
         }
 
         public (int, int) GetDimension() {
             return this.dimension;
+        }
+
+        public int GetNumMines() {
+            return this.numMines;
+        }
+
+        public int GetNumRevealed() {
+            return this.numRevealed;
         }
         
         private void ExploreSquare(int row, int col) {
@@ -62,8 +96,9 @@ namespace MineSweeper
                 return;
             }
             
-            // First, reveal the square being explored
+            // First, reveal the square being explored, add 1 to numRevealed
             squares[row][col].Reveal();
+            this.numRevealed += 1;
 
             // Count the number of mines among the neighbors
             int numMines = 0;
@@ -88,6 +123,7 @@ namespace MineSweeper
             }
         }
 
+        // Set all the squares that contain a mine to "revealed"
         public void RevealAllMines() {
             for (int r = 0; r < dimension.Item1; r++) {
                 for (int c = 0; c < dimension.Item2; c++) {

@@ -8,17 +8,23 @@ namespace MineSweeper {
         private string path;
         private (int, int) w_size;
         private (int, int) boardDimension;
+        private int numSquares;
+        private float percentMines;         // percentMines: How many percent of the number of squares are mines?
 
-        public InitializeBoardAction(int priority, (int, int) w_size, (int, int) boardDimension, string path = "") :
+        public InitializeBoardAction(int priority, (int, int) w_size, (int, int) boardDimension, float percentMines, string path = "") :
         base(priority) {
             this.w_size = w_size;
             this.boardDimension = boardDimension;
+            this.percentMines = percentMines;
+            this.numSquares = this.boardDimension.Item1 * this.boardDimension.Item2;
             this.path = path;
         }
 
+        // Return a random set of indices from 0 to <numSquares>, exclusively,
+        // where the mines are. The number of indices in this set is the number
+        // of mines
         private HashSet<int> GetMinesIndicesSet() {
-            int numSquares = boardDimension.Item1 * boardDimension.Item2;
-            int numMines = (int) (0.15 * numSquares); //about 20% of squares are mines
+            int numMines = (int)(this.percentMines * numSquares);
             int numMineGenerated = 0;
 
             HashSet<int> mineIndices = new HashSet<int>();
@@ -35,6 +41,8 @@ namespace MineSweeper {
             return mineIndices;
         }
 
+        // Generate a random 2D List of booleans which specify where the mines are.
+        // True if there's a mine at the specified coordinate, False otherwise.
         private List<List<bool>> GenerateMineGrid() {
             List<List<bool>> mineGrid = new List<List<bool>>();
 
@@ -56,26 +64,26 @@ namespace MineSweeper {
             return mineGrid;
         }
 
+        // Execute...
         override public void execute(Cast cast, Script script, Clock clock, Callback callback) {
+
+            // Generate the mineGrid
             List<List<bool>> mineGrid = GenerateMineGrid();
 
+            // Create the board with the given mineGrid
             Board board = new Board(this.boardDimension, mineGrid, "", this.w_size.Item1 - 50, this.w_size.Item2 - 50, this.w_size.Item1 / 2, this.w_size.Item2 / 2);
 
-            // Give actors to cast
+            // Give board to the cast
             cast.AddActor("board", board);
 
-            if (board != null) {
-                (int r, int c) dimension = board.GetDimension();
-                Console.WriteLine(dimension);
-                List<List<Square>> squares = board.GetSquares();
-
-                for(int i = 0; i < dimension.r; i++) {
-                    for (int j = 0; j < dimension.c; j++) {
-                        cast.AddActor("squares", squares[i][j]);
-                    }
+            // Put all the Square objects contained in the board in the cast
+            foreach (List<Square> row in board.GetSquares()) {
+                foreach (Square square in row) {
+                    cast.AddActor("squares", square);
                 }
             }
 
+            // This action should only happen once at the beginning of the game
             script.RemoveAction("input", this);
         }
     }
